@@ -1,0 +1,5 @@
+node_modules
+dist
+art-raw
+.DS_Store
+*.local
