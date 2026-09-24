@@ -82,7 +82,7 @@ export function exportSaveJson(save: SaveData): string {
 export function parseSaveJson(text: string): SaveData {
   const data = JSON.parse(text) as SaveData;
   if (!data || !data.trainerName) {
-    throw new Error("存档格式不正确");
+    throw new Error("这份进度读不了，请换一份再试。");
   }
   return migrateSave(data);
 }

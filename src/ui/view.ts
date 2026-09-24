@@ -228,7 +228,7 @@ function onboard(): Frame {
   return {
     body: `<div class="card stack">
       <h2>FS宝可梦之征战全国大赛</h2>
-      <p class="muted">开训即获中锋、前锋、后卫各一名，并带上金币和理疗包。先去巷口球场打一场。存档只在这台浏览器里。</p>
+      <p class="muted">开训即获中锋、前锋、后卫各一名，并带上金币和理疗包。进度会自动保存，先去巷口球场打一场。</p>
       <input id="name" type="text" maxlength="12" placeholder="队长名字" value="${esc(ui.onboardName)}" />
       <button class="btn red" data-act="create">开训</button>
     </div>`,
@@ -559,14 +559,14 @@ function pkPanel(save: SaveData): string {
   );
   const beaten = new Set(save.pkBeaten ?? []);
   const poolHint = pkCloudReady()
-    ? "阵容在云端共用池，同事能打到你。"
-    : "当前用本机池，这台浏览器里的存档能互相打。配置 VITE_PK_API 后可联机。";
+    ? "你的阵容挂在挑战墙上，其他队长也能来踢馆。"
+    : "按名单踢馆。先把当前首发传上去。";
   if (!open) {
     return `<div class="card stack"><h2>街球 PK</h2><p class="muted">先占领一座有名球场再来上传阵容、挑战别人。</p></div>`;
   }
   return `<div class="card stack">
     <h2>街球 PK</h2>
-    <p class="muted">${esc(poolHint)} 挑战 ${pkStake()} 金币，赢 +${pkWinGold()}。今天还能打 ${left} 场。</p>
+    <p class="muted">${esc(poolHint)}挑战 ${pkStake()} 金币，赢 +${pkWinGold()}。今天还能打 ${left} 场。</p>
     <p class="power-line">${mine ? `已上传 · 胜 ${mine.wins} 负 ${mine.losses}${mine.pendingGold ? ` · 待领 ${mine.pendingGold}` : ""}` : "还没上传阵容"}</p>
     <div class="row">
       <button class="btn red" data-act="pk-upload">上传当前首发</button>
@@ -828,16 +828,17 @@ function more(save: SaveData): Frame {
       }).join("")}</div>
     </div>
     <div class="card stack">
-      <h2>存档</h2>
+      <h2>进度</h2>
+      <p class="muted">进度会自动保存。想换地方接着打，先备份再读入。</p>
       <div class="row">
-        <button class="btn gold" data-act="export">导出</button>
-        <label class="btn ghost">导入<input id="import" type="file" accept="application/json" hidden /></label>
+        <button class="btn gold" data-act="export">备份</button>
+        <label class="btn ghost">读入<input id="import" type="file" accept="application/json" hidden /></label>
       </div>
       <div class="row">
         <input id="rename" type="text" maxlength="12" value="${esc(save.trainerName)}" />
         <button class="btn" data-act="rename">改名</button>
       </div>
-      <button class="btn ghost" data-act="new-game">重新开始</button>
+      <button class="btn ghost" data-act="new-game">重新开训</button>
     </div>
     <div class="card stack">
       <h2>音乐</h2>
@@ -1203,7 +1204,7 @@ function bind(root: HTMLElement): void {
     const file = (e.target as HTMLInputElement).files?.[0];
     if (!file) return;
     try { await replaceSave(parseSaveJson(await file.text())); }
-    catch (err) { alert(err instanceof Error ? err.message : "导入失败"); }
+    catch (err) { alert(err instanceof Error ? err.message : "读入失败"); }
   });
   root.querySelector("[data-act='rename']")?.addEventListener("click", () => {
     void renameTrainer((root.querySelector("#rename") as HTMLInputElement | null)?.value ?? "");
@@ -1217,7 +1218,7 @@ function bind(root: HTMLElement): void {
     void renameCreature(ui.selectedUid, (root.querySelector("#nick") as HTMLInputElement | null)?.value ?? "");
   });
   root.querySelector("[data-act='new-game']")?.addEventListener("click", () => {
-    if (!confirm("确定清空本机存档并重新开始？")) return;
+    if (!confirm("确定放弃当前进度，重新开训？")) return;
     void resetGame();
   });
   root.querySelector("[data-act='bgm-on']")?.addEventListener("click", () => {

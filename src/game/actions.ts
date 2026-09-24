@@ -1039,7 +1039,7 @@ export async function resetGame(): Promise<void> {
   ui.onboardName = "";
   ui.queuedBattles = [];
   pkCache = npcPkLineups();
-  toast("存档已清空，可以重新起名。");
+  toast("可以重新起名了。");
   emit();
 }
 
@@ -1048,7 +1048,7 @@ export async function replaceSave(next: SaveData): Promise<void> {
   settle(next);
   ui.save = next;
   await persistSave(next);
-  toast("存档已导入。");
+  toast("进度已读入。");
   ui.screen = "home";
   emit();
 }
@@ -1077,7 +1077,7 @@ export async function refreshPkList(): Promise<void> {
     pkCache = await listLineups();
   } catch (err) {
     pkCache = npcPkLineups();
-    toast(err instanceof Error ? err.message : "阵容池打不开。");
+    toast(err instanceof Error ? err.message : "挑战名单暂时打不开。");
   }
   emit();
 }
@@ -1092,7 +1092,7 @@ export async function uploadPkTeam(): Promise<void> {
   }
   try {
     await uploadLineup(save, team.slice(0, 3));
-    toast("阵容已上传到 PK 池。");
+    toast("首发已挂上挑战墙。");
     await commit();
     await refreshPkList();
   } catch (err) {
@@ -1130,7 +1130,7 @@ export async function challengePk(foeId: string): Promise<void> {
     const list = pkCache.length ? pkCache : await listLineups();
     foe = list.find((x) => x.playerId === foeId);
   } catch (err) {
-    toast(err instanceof Error ? err.message : "阵容池打不开。");
+    toast(err instanceof Error ? err.message : "挑战名单暂时打不开。");
     return;
   }
   if (!foe) {
